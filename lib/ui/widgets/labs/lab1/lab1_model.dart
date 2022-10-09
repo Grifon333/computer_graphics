@@ -57,7 +57,7 @@ class Lab1Model extends ChangeNotifier {
 
   void scaleGraph() {
     double scale = 1;
-    if (_rating == 0.5) return;
+    if (_rating == 0) return;
     scale = calculateScale();
 
     final oldRange = _end - _start;
@@ -79,7 +79,7 @@ class Lab1Model extends ChangeNotifier {
   double calculateScale() {
     const double ratingMin = 0;
     const double ratingMax = 1;
-    const double scaleMin = 0.5;
+    const double scaleMin = 0;
     const double scaleMax = 2;
     return ((_rating - ratingMin) * (scaleMax - scaleMin)) /
             (ratingMax - ratingMin) +

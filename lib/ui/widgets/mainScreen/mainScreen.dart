@@ -73,10 +73,13 @@ class _ListButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const count = 2;
+    const all = 8;
+
     return SizedBox(
-      height: 640,
+      height: MediaQuery.of(context).size.height - 200,
       child: ListView.builder(
-        itemCount: 1,
+        itemCount: all,
         itemExtent: 80,
         padding: const EdgeInsets.only(top: 30),
         itemBuilder: (BuildContext context, int index) {
@@ -84,11 +87,11 @@ class _ListButtons extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: index < 1
+                backgroundColor: index < count
                     ? MaterialStateProperty.all(AppColors.buttonBG)
                     : MaterialStateProperty.all(AppColors.buttonBG_disable),
               ),
-              onPressed: index < 1
+              onPressed: index < count
                   ? () => Navigator.of(context).pushNamed('/lab${index + 1}')
                   : null,
               child: Text(

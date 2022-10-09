@@ -299,7 +299,7 @@ class _IntervalWidget extends StatelessWidget {
                   decimal: true,
                 ),
                 inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^-?(\d|.)?\d*$')),
+                  FilteringTextInputFormatter.allow(RegExp(r'^[-]?\d*\.?\d*')),
                 ],
                 style: const TextStyle(fontSize: 16),
                 textAlign: TextAlign.end,
