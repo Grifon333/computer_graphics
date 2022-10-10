@@ -18,7 +18,10 @@ class Lab2Widget extends StatelessWidget {
         body:
             // const Center(
             //     child:
-            const _BodyWidget()
+            const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: _BodyWidget(),
+        )
         // ),
         );
   }
@@ -32,36 +35,83 @@ class _BodyWidget extends StatelessWidget {
     final model = NotifierProvider.watch<Lab2Model>(context);
     if (model == null) return const SizedBox.shrink();
 
-    double size = 300;
+    double size = MediaQuery.of(context).size.width / 2 - 18;
     return Column(
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              color: Colors.grey[300]),
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: CustomPaint(
-            painter: _SymbolPainter(color: model.color),
+        const _ChangeColorWidget(),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _ShowElementWidget(
+              size: size,
+              painter: _SymbolPainter(color: model.color),
             ),
-          ),
-        ),
-        DecoratedBox(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              color: Colors.grey[300]),
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: CustomPaint(
+            _ShowElementWidget(
+              size: size,
               painter: _NumberPainter(color: model.color),
             ),
-          ),
+          ],
         ),
       ],
+    );
+  }
+}
+
+class _ShowElementWidget extends StatelessWidget {
+  final double size;
+  final CustomPainter painter;
+
+  const _ShowElementWidget({
+    Key? key,
+    required this.size,
+    required this.painter,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          color: Colors.grey[300]),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: CustomPaint(
+          painter: painter,
+        ),
+      ),
+    );
+  }
+}
+
+class _ChangeColorWidget extends StatelessWidget {
+  const _ChangeColorWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab2Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 40,
+      child: ListView.builder(
+        itemCount: 7,
+        itemExtent: 52,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            onTap: () => model.setColor(model.colors[index]),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: ColoredBox(
+                color: model.colors[index],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -121,7 +171,7 @@ class _SymbolPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+    return true;
   }
 
   void colorFill(Offset start) {
@@ -139,6 +189,8 @@ class _SymbolPainter extends CustomPainter {
       final pBottom = Offset(p.dx, p.dy + 1);
       if (checkBorder(pLeft)) {
         stack.addLast(pLeft);
+      } else {
+        _pouring.add(pLeft);
       }
       if (checkBorder(pRight)) {
         stack.addLast(pRight);
@@ -147,6 +199,8 @@ class _SymbolPainter extends CustomPainter {
       }
       if (checkBorder(pTop)) {
         stack.addLast(pTop);
+      } else {
+        _pouring.add(pTop);
       }
       if (checkBorder(pBottom)) {
         stack.addLast(pBottom);
@@ -326,7 +380,7 @@ class _NumberPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+    return true;
   }
 
   void sim(Offset center, int x, int y, double minY, double maxY) {
@@ -390,6 +444,8 @@ class _NumberPainter extends CustomPainter {
       final pBottom = Offset(p.dx, p.dy + 1);
       if (checkBorder(pLeft)) {
         stack.addLast(pLeft);
+      } else {
+        _pouring.add(pLeft);
       }
       if (checkBorder(pRight)) {
         stack.addLast(pRight);
@@ -398,6 +454,8 @@ class _NumberPainter extends CustomPainter {
       }
       if (checkBorder(pTop)) {
         stack.addLast(pTop);
+      } else {
+        _pouring.add(pTop);
       }
       if (checkBorder(pBottom)) {
         stack.addLast(pBottom);
