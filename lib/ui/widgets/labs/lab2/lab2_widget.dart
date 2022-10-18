@@ -1,9 +1,9 @@
 import 'dart:collection';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:graphics/Library/Widgets/Inherited/provider.dart';
+import 'package:graphics/ui/elements/alphabet.dart';
 import 'package:graphics/ui/widgets/labs/lab2/lab2_model.dart';
 
 class Lab2Widget extends StatelessWidget {
@@ -12,18 +12,14 @@ class Lab2Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Lab2'),
-        ),
-        body:
-            // const Center(
-            //     child:
-            const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: _BodyWidget(),
-        )
-        // ),
-        );
+      appBar: AppBar(
+        title: const Text('Lab2'),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: _BodyWidget(),
+      ),
+    );
   }
 }
 
@@ -35,23 +31,93 @@ class _BodyWidget extends StatelessWidget {
     final model = NotifierProvider.watch<Lab2Model>(context);
     if (model == null) return const SizedBox.shrink();
 
-    double size = MediaQuery.of(context).size.width / 2 - 18;
+    // double size = MediaQuery.of(context).size.width / 2 - 18;
+    int size = MediaQuery.of(context).orientation == Orientation.landscape
+        ? (MediaQuery.of(context).size.height / 2 - 32).toInt()
+        : (MediaQuery.of(context).size.width / 2 - 32).toInt();
     return Column(
       children: [
         const _ChangeColorWidget(),
         const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _ShowElementWidget(
-              size: size,
-              painter: _SymbolPainter(color: model.color),
-            ),
-            _ShowElementWidget(
-              size: size,
-              painter: _NumberPainter(color: model.color),
-            ),
-          ],
+        SizedBox(
+          height: size.toDouble(),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _ShowElementWidget(
+                size: size,
+                painter: Alphabet().d(model.color),
+              ),
+              _ShowElementWidget(
+                size: size,
+                painter: Alphabet().a(model.color),
+              ),
+              _ShowElementWidget(
+                size: size,
+                painter: Alphabet().n(model.color),
+              ),
+              _ShowElementWidget(
+                size: size,
+                painter: Alphabet().ya(model.color),
+              ),
+
+              // Container(
+              //   child: FittedBox(
+              //     fit: BoxFit.fitWidth,
+              //     child: ClipRect(
+              //       clipper: _MyClipper(),
+              //       child: _ShowElementWidget(
+              //         size: size,
+              //         painter: Alphabet().d(model.color),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+
+              // Container( // just a parent
+              //   child: Align( // important
+              //     alignment: Alignment.center,
+              //     child: SizedBox(
+              //       width: 100,  // final width of cropped portion
+              //       height: 100,  // final height of cropped portion
+              //       child: ClipRect(
+              //         clipper: _MyClipper(),// this is a custom clipper i made of type CustomClipper<Rect>
+              //         child: _ShowElementWidget(
+              //           size: size,
+              //           painter: Alphabet().a(model.color),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // )
+
+              // Crop(
+              //   controller: controller,
+              //   child: _ShowElementWidget(
+              //     size: size,
+              //     painter: Alphabet().d(model.color),
+              //   ),
+              //   shape: BoxShape.rectangle,
+              // ),
+
+              // _ShowElementWidget(
+              //   size: size,
+              //   painter: Alphabet().a(model.color),
+              // ),
+              // _ShowElementWidget(
+              //   size: size,
+              //   painter: Alphabet().n(model.color),
+              // ),
+              // _ShowElementWidget(
+              //   size: size,
+              //   painter: Alphabet().ya(model.color),
+              // ),
+              // _ShowElementWidget(
+              //   size: size,
+              //   painter: _NumberPainter(color: model.color),
+              // ),
+            ],
+          ),
         ),
       ],
     );
@@ -59,7 +125,7 @@ class _BodyWidget extends StatelessWidget {
 }
 
 class _ShowElementWidget extends StatelessWidget {
-  final double size;
+  final int size;
   final CustomPainter painter;
 
   const _ShowElementWidget({
@@ -76,8 +142,8 @@ class _ShowElementWidget extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.grey[300]),
       child: SizedBox(
-        width: size,
-        height: size,
+        width: size.toDouble(),
+        height: size.toDouble(),
         child: CustomPaint(
           painter: painter,
         ),
@@ -113,237 +179,6 @@ class _ChangeColorWidget extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class _SymbolPainter extends CustomPainter {
-  final Color color;
-  final List<Offset> _points = [];
-  final List<Offset> _pouring = [];
-  List<List<int>> _matrix = [];
-  Offset _start = const Offset(0, 0);
-
-  _SymbolPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paintBorder = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1;
-    final paintFill = Paint()
-      ..color = color
-      ..strokeWidth = 1;
-    int w = size.width.toInt();
-    int h = size.height.toInt();
-    List<Offset> points = [];
-    _matrix = List.generate(h, (_) => List.filled(w, 0));
-
-    // draw outline border
-    moveToStart(Offset(w * 0.2, h * 0.1));
-    points
-      ..add(Offset(w * 0.7, h * 0.2))
-      ..add(Offset(w * 0.6, h * 0.7))
-      ..add(Offset(w * 0.75, h * 0.7))
-      ..add(Offset(w * 0.65, h * 0.9))
-      ..add(Offset(w * 0.65, h * 0.8))
-      ..add(Offset(w * 0.35, h * 0.8))
-      ..add(Offset(w * 0.35, h * 0.9))
-      ..add(Offset(w * 0.25, h * 0.7))
-      ..add(Offset(w * 0.4, h * 0.7));
-    drawPolygon(points);
-    points.clear();
-
-    // draw inline border
-    moveToStart(Offset(w * 0.4, h * 0.25));
-    points
-      ..add(Offset(w * 0.55, h * 0.3))
-      ..add(Offset(w * 0.5, h * 0.55));
-    drawPolygon(points);
-    points.clear();
-
-    // color fill
-    colorFill(Offset(0.3 * w, 0.3 * h));
-
-    // showing
-    canvas.drawPoints(PointMode.points, _pouring, paintFill);
-    canvas.drawPoints(PointMode.points, _points, paintBorder);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-
-  void colorFill(Offset start) {
-    final stack = Queue<Offset>();
-    stack.addLast(start);
-
-    while (stack.isNotEmpty) {
-      final p = stack.last;
-      stack.removeLast();
-      _matrix[p.dx.toInt()][p.dy.toInt()] = 1;
-
-      final pLeft = Offset(p.dx - 1, p.dy);
-      final pRight = Offset(p.dx + 1, p.dy);
-      final pTop = Offset(p.dx, p.dy - 1);
-      final pBottom = Offset(p.dx, p.dy + 1);
-      if (checkBorder(pLeft)) {
-        stack.addLast(pLeft);
-      } else {
-        _pouring.add(pLeft);
-      }
-      if (checkBorder(pRight)) {
-        stack.addLast(pRight);
-      } else {
-        _pouring.add(pRight);
-      }
-      if (checkBorder(pTop)) {
-        stack.addLast(pTop);
-      } else {
-        _pouring.add(pTop);
-      }
-      if (checkBorder(pBottom)) {
-        stack.addLast(pBottom);
-      } else {
-        _pouring.add(pBottom);
-      }
-      _pouring.add(Offset(p.dx, p.dy));
-    }
-  }
-
-  bool checkBorder(Offset point) {
-    int element = _matrix[point.dx.toInt()][point.dy.toInt()];
-    if (element == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void drawLine(Offset start, Offset end) {
-    int x1 = start.dx.toInt(), x2 = end.dx.toInt();
-    int y1 = start.dy.toInt(), y2 = end.dy.toInt();
-
-    int xErr = 0, yErr = 0;
-    int incX = 0, incY = 0;
-    int d = 0;
-    int dx = x2 - x1;
-    int dy = y2 - y1;
-
-    if (dx > 0) {
-      incX = 1;
-    } else if (dx == 0) {
-      incX = 0;
-    } else if (dx < 0) {
-      incX = -1;
-    }
-
-    if (dy > 0) {
-      incY = 1;
-    } else if (dy == 0) {
-      incY = 0;
-    } else if (dy < 0) {
-      incY = -1;
-    }
-
-    dx = module(dx);
-    dy = module(dy);
-
-    d = dx > dy ? dx : dy;
-
-    int x = x1;
-    int y = y1;
-    _points.add(Offset(x.toDouble(), y.toDouble()));
-    _matrix[x][y] = -1;
-
-    for (int i = 0; i < d; i++) {
-      xErr += dx;
-      yErr += dy;
-
-      if (xErr > d) {
-        xErr -= d;
-        x += incX;
-      }
-      if (yErr > d) {
-        yErr -= d;
-        y += incY;
-      }
-
-      _points.add(Offset(x.toDouble(), y.toDouble()));
-      _matrix[x][y] = -1;
-    }
-  }
-
-  void moveToStart(Offset pos) {
-    _start = pos;
-  }
-
-  void drawPolygon(List<Offset> points) {
-    Offset p1, p2, p3;
-
-    Offset startP = margin(points[0], _start);
-    Offset start = startP;
-    Offset end;
-    for (int i = 0; i < points.length; i++) {
-      end = margin(start, points[i]);
-      p1 = end;
-      p2 = Offset(points[i].dx, points[i].dy);
-      if (i < points.length - 1) {
-        p3 = margin(points[i + 1], points[i]);
-      } else {
-        p3 = margin(_start, points[i]);
-      }
-      drawBezier(p1, p2, p3);
-
-      drawLine(start, end);
-      start = p3;
-    }
-
-    end = margin(points[points.length - 1], _start);
-    p1 = end;
-    p2 = _start;
-    p3 = startP;
-    drawBezier(p1, p2, p3);
-    drawLine(start, end);
-  }
-
-  Offset margin(Offset start, Offset end) {
-    double k = 0.2;
-
-    return Offset(
-        end.dx + k * (start.dx - end.dx), end.dy + k * (start.dy - end.dy));
-  }
-
-  void drawBezier(Offset p1, Offset p2, Offset p3) {
-    double t = 0;
-    int x, y;
-    int x0 = p1.dx.toInt();
-    int y0 = p1.dy.toInt();
-    double step = max(max(p1.dx, p3.dx) - min(p1.dx, p3.dx),
-        max(p1.dy, p3.dy) - min(p1.dy, p3.dy));
-    step = 2 / step;
-
-    for (; t <= 1; t += step) {
-      x = ((1 - t) * (1 - t) * p1.dx + 2 * (1 - t) * t * p2.dx + t * t * p3.dx)
-          .toInt();
-      y = ((1 - t) * (1 - t) * p1.dy + 2 * (1 - t) * t * p2.dy + t * t * p3.dy)
-          .toInt();
-
-      // _points.add(Offset(x, y));
-      drawLine(Offset(x0.toDouble(), y0.toDouble()),
-          Offset(x.toDouble(), y.toDouble()));
-      x0 = x;
-      y0 = y;
-    }
-
-    int xL = p3.dx.toInt();
-    int yL = p3.dy.toInt();
-    drawLine(Offset(x0.toDouble(), y0.toDouble()),
-        Offset(xL.toDouble(), yL.toDouble()));
-  }
-
-  int module(int value) {
-    return value < 0 ? value * -1 : value;
   }
 }
 
@@ -479,8 +314,8 @@ class _NumberPainter extends CustomPainter {
 class _MyClipper extends CustomClipper<Rect> {
   @override
   Rect getClip(Size size) {
-    return Rect.fromLTWH(0.2 * size.width, 0.1 * size.height, 0.55 * size.width,
-        0.8 * size.height);
+    return Rect.fromLTRB(0.2 * size.width, 0.1 * size.height, 0.8 * size.width,
+        0.9 * size.height);
   }
 
   @override
