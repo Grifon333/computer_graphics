@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:graphics/Library/Widgets/Inherited/provider.dart';
 import 'package:graphics/ui/elements/alphabet.dart';
@@ -11,13 +9,27 @@ class Lab2Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab2Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lab2'),
+        actions: [
+          IconButton(
+            onPressed: () => model.reset(),
+            icon: const Icon(
+              Icons.refresh,
+              size: 28,
+            ),
+          )
+        ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: _BodyWidget(),
+      body: const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: _BodyWidget(),
+        ),
       ),
     );
   }
@@ -28,68 +40,137 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height - 560,
+          child: Column(
+            children: const [
+              _ChangeColorWidget(),
+              SizedBox(height: 30),
+              _NameWidget(),
+              SizedBox(height: 20),
+              _YearWidget(),
+            ],
+          ),
+        ),
+        const _ChangeScoreWidget(),
+        const SizedBox(height: 10),
+        const _ChangeRotationWidget(),
+      ],
+    );
+  }
+}
+
+class _NameWidget extends StatelessWidget {
+  const _NameWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab2Model>(context);
     if (model == null) return const SizedBox.shrink();
 
-    // double size = MediaQuery.of(context).size.width / 2 - 18;
-    // int size = MediaQuery.of(context).orientation == Orientation.landscape
-    //     ? (MediaQuery.of(context).size.height / 2 - 32).toInt()
-    //     : (MediaQuery.of(context).size.width / 2 - 32).toInt();
-    int size = ((MediaQuery.of(context).size.width - 32) / 4).toInt();
-    return Column(
-      children: [
-        const _ChangeColorWidget(),
-        const SizedBox(height: 30),
-        SizedBox(
-          height: size.toDouble(),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _ShowElementWidget(
-                size: size,
-                painter: Alphabet().d(model.color),
+    int size = (MediaQuery.of(context).size.width - 32) ~/ 4;
+
+    return GestureDetector(
+      onTapDown: (details) {
+        model.setAnchorPointName(details.localPosition);
+      },
+      onPanUpdate: (details) {
+        model.setOffsetName(model.offsetName + details.delta);
+      },
+      child: Transform(
+        origin: model.anchorPointName,
+        transform: model.getMatrixOffsetName(),
+        child: Transform(
+          origin: model.anchorPointName,
+          transform: model.getMatrixScaleName(),
+          child: Transform(
+            origin: model.anchorPointName,
+            transform: model.getMatrixRotationName(),
+            child: SizedBox(
+              height: size.toDouble(),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _ShowElementWidget(
+                    size: size,
+                    painter: Alphabet().d(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: Alphabet().a(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: Alphabet().n(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: Alphabet().ya(model.color),
+                  ),
+                ],
               ),
-              _ShowElementWidget(
-                size: size,
-                painter: Alphabet().a(model.color),
-              ),
-              _ShowElementWidget(
-                size: size,
-                painter: Alphabet().n(model.color),
-              ),
-              _ShowElementWidget(
-                size: size,
-                painter: Alphabet().ya(model.color),
-              ),
-            ],
+            ),
           ),
         ),
-        const SizedBox(height: 20),
-        SizedBox(
-          height: size.toDouble(),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _ShowElementWidget(
-                size: size,
-                painter: CustomNumbers().two(model.color),
+      ),
+    );
+  }
+}
+
+class _YearWidget extends StatelessWidget {
+  const _YearWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab2Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    int size = (MediaQuery.of(context).size.width - 32) ~/ 4;
+
+    return GestureDetector(
+      onTapDown: (details) {
+        model.setAnchorPointYear(details.localPosition);
+      },
+      onPanUpdate: (details) {
+        model.setOffsetYear(model.offsetYear + details.delta);
+      },
+      child: Transform(
+        transform: model.getMatrixOffsetYear(),
+        child: Transform(
+          origin: model.anchorPointYear,
+          transform: model.getMatrixScaleYear(),
+          child: Transform(
+            origin: model.anchorPointYear,
+            transform: model.getMatrixRotationYear(),
+            child: SizedBox(
+              height: size.toDouble(),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _ShowElementWidget(
+                    size: size,
+                    painter: CustomNumbers().two(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: CustomNumbers().zero(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: CustomNumbers().zero(model.color),
+                  ),
+                  _ShowElementWidget(
+                    size: size,
+                    painter: CustomNumbers().three(model.color),
+                  ),
+                ],
               ),
-              _ShowElementWidget(
-                size: size,
-                painter: CustomNumbers().zero(model.color),
-              ),
-              _ShowElementWidget(
-                size: size,
-                painter: CustomNumbers().zero(model.color),
-              ),
-              _ShowElementWidget(
-                size: size,
-                painter: CustomNumbers().three(model.color),
-              ),
-            ],
+            ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -164,7 +245,8 @@ class _ChangeColorWidget extends StatelessWidget {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.black, width: 1),
-                        borderRadius: const BorderRadius.all(Radius.circular(3)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(3)),
                         color: model.colors[index],
                       ),
                     ),
@@ -180,15 +262,124 @@ class _ChangeColorWidget extends StatelessWidget {
   }
 }
 
-class _MyClipper extends CustomClipper<Rect> {
-  @override
-  Rect getClip(Size size) {
-    return Rect.fromLTRB(0.2 * size.width, 0.1 * size.height, 0.8 * size.width,
-        0.9 * size.height);
-  }
+class _ChangeScoreWidget extends StatelessWidget {
+  const _ChangeScoreWidget({Key? key}) : super(key: key);
 
   @override
-  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) {
-    return false;
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab2Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Scale',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Name',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 80,
+              child: Slider.adaptive(
+                value: model.scaleName * 100,
+                onChanged: (value) => model.setScaleName(value),
+                min: 75,
+                max: 125,
+                activeColor: Colors.blue[800],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Year',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 80,
+              child: Slider.adaptive(
+                value: model.scaleYear * 100,
+                onChanged: (value) => model.setScaleYear(value),
+                min: 75,
+                max: 125,
+                activeColor: Colors.blue[800],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ChangeRotationWidget extends StatelessWidget {
+  const _ChangeRotationWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab2Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Rotation',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Name',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 80,
+              child: Slider.adaptive(
+                value: model.angleName,
+                onChanged: (value) => model.setAngleName(value),
+                min: 0,
+                max: 360,
+                activeColor: Colors.blue[800],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Year',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 80,
+              child: Slider.adaptive(
+                value: model.angleYear,
+                onChanged: (value) => model.setAngleYear(value),
+                min: 0,
+                max: 360,
+                activeColor: Colors.blue[800],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

@@ -105,7 +105,7 @@ class _TwoPainter extends CustomPainter {
       Offset(0.5 * w, 0.3 * h),
       0.1 * w,
       0,
-      0.35 * h,
+      0.36 * h,
       formulas.sim,
     );
 
@@ -116,7 +116,7 @@ class _TwoPainter extends CustomPainter {
     points.add(Offset(0.7 * w, 0.9 * h));
     points.add(Offset(0.3 * w, 0.9 * h));
     points.add(Offset(0.3 * w, 0.8 * h));
-    points.add(Offset(0.587 * w, 0.35 * h));
+    points.add(Offset(0.59 * w, 0.34 * h));
     for (int i = 0; i < points.length - 1; i++) {
       Offset start = points[i];
       Offset end = points[i + 1];
@@ -125,7 +125,7 @@ class _TwoPainter extends CustomPainter {
     points.clear();
 
     points.add(Offset(0.33 * w, 0.4 * h));
-    points.add(Offset(0.418 * w, 0.35 * h));
+    points.add(Offset(0.435 * w, 0.35 * h));
     for (int i = 0; i < points.length - 1; i++) {
       Offset start = points[i];
       Offset end = points[i + 1];
@@ -189,7 +189,7 @@ class _ThreePainter extends CustomPainter {
       _matrix,
       Offset(0.5 * w, 0.65 * h),
       0.25 * w,
-      0.443 * h,
+      0.43 * h,
       h.toDouble(),
       formulas.simForThree1,
     );
@@ -207,13 +207,13 @@ class _ThreePainter extends CustomPainter {
       _points,
       _matrix,
       Offset(0.31 * w, 0.3 * h),
-      Offset(0.41 * w, 0.3 * h),
+      Offset(0.42 * w, 0.3 * h),
     );
     formulas.drawLine(
       _points,
       _matrix,
       Offset(0.26 * w, 0.65 * h),
-      Offset(0.36 * w, 0.65 * h),
+      Offset(0.37 * w, 0.65 * h),
     );
     formulas.drawLine(
       _points,
