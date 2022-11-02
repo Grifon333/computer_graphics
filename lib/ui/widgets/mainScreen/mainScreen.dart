@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphics/Theme/app_colors.dart';
+import 'package:graphics/ui/navigation/main_navigation.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -73,8 +74,8 @@ class _ListButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const count = 2;
-    const all = 8;
+    final count = MainNavigation().routes.length;
+    const all = 3;
 
     return SizedBox(
       height: MediaQuery.of(context).size.height - 200,

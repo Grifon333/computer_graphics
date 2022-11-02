@@ -15,6 +15,7 @@ class Lab2Widget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lab2'),
+        backgroundColor: Colors.green,
         actions: [
           IconButton(
             onPressed: () => model.reset(),
