@@ -29,8 +29,8 @@ class MyCustomPainter extends CustomPainter {
       ..color = Colors.black12
       ..strokeWidth = 2;
 
-    const double front = 9;
-    const double back = 1;
+    const double front = 4;
+    const double back = -4;
     final points3D = [
       Point(-10, 1, front),
       Point(-10, 0.5, front),
@@ -61,20 +61,20 @@ class MyCustomPainter extends CustomPainter {
       Point(-2.5, 2, front),
       Point(-1.5, 2.5, front),
       Point(-1.5, 2, front),
-      Point(-1, 4, front),
-      Point(-0.5, 3.5, front),
+      Point(-1, 4, front - 1),
+      Point(-0.5, 3.5, front - 0.75),
       Point(1, 2, front),
       Point(1, -1.5, front),
-      Point(2, 4, front),
-      Point(2, 3.5, front),
+      Point(2, 4, front - 1),
+      Point(2, 3.5, front - 0.75),
       Point(4, -1.5, front),
       Point(5, -1, front),
       Point(5, -2, front),
       Point(6, 2, front),
       Point(6, 0, front),
       Point(6, -3, front),
-      Point(6.5, 2.5, front),
-      Point(7, 3, front),
+      Point(6.5, 2.5, front - 0.25),
+      Point(7, 3, front - 0.5),
       Point(7, 0, front),
       Point(7, -3, front),
       Point(8, -1, front),
@@ -86,6 +86,24 @@ class MyCustomPainter extends CustomPainter {
       Point(10, 1, front),
       Point(10, 0, front),
       Point(10, -2, front),
+      // wheels
+      Point(-8, -2, front - 1.5),
+      Point(-7, -3, front - 1.5),
+      Point(-6, -3, front - 1.5),
+      Point(-5, -2, front - 1.5),
+      Point(5, -2, front - 1.5),
+      Point(6, -3, front - 1.5),
+      Point(7, -3, front - 1.5),
+      Point(8, -2, front - 1.5),
+      // mirrors
+      Point(-2.5, 2, front + 1),
+      Point(-2.5, 2.5, front + 1),
+      Point(-1.5, 2.5, front + 1),
+      Point(-1.5, 2, front + 1),
+      //
+      Point(10, 0, front - 2),
+      Point(10, 1, front - 2),
+      //
       Point(-10, 1, back),
       Point(-10, 0.5, back),
       Point(-10, -0.5, back),
@@ -115,20 +133,20 @@ class MyCustomPainter extends CustomPainter {
       Point(-2.5, 2, back),
       Point(-1.5, 2.5, back),
       Point(-1.5, 2, back),
-      Point(-1, 4, back),
-      Point(-0.5, 3.5, back),
+      Point(-1, 4, back + 1),
+      Point(-0.5, 3.5, back + 0.75),
       Point(1, 2, back),
       Point(1, -1.5, back),
-      Point(2, 4, back),
-      Point(2, 3.5, back),
+      Point(2, 4, back + 1),
+      Point(2, 3.5, back + 0.75),
       Point(4, -1.5, back),
       Point(5, -1, back),
       Point(5, -2, back),
       Point(6, 2, back),
       Point(6, 0, back),
       Point(6, -3, back),
-      Point(6.5, 2.5, back),
-      Point(7, 3, back),
+      Point(6.5, 2.5, back + 0.25),
+      Point(7, 3, back + 0.5),
       Point(7, 0, back),
       Point(7, -3, back),
       Point(8, -1, back),
@@ -140,6 +158,23 @@ class MyCustomPainter extends CustomPainter {
       Point(10, 1, back),
       Point(10, 0, back),
       Point(10, -2, back),
+      // wheels
+      Point(-8, -2, back + 1.5),
+      Point(-7, -3, back + 1.5),
+      Point(-6, -3, back + 1.5),
+      Point(-5, -2, back + 1.5),
+      Point(5, -2, back + 1.5),
+      Point(6, -3, back + 1.5),
+      Point(7, -3, back + 1.5),
+      Point(8, -2, back + 1.5),
+      // mirrors
+      Point(-2.5, 2, back - 1),
+      Point(-2.5, 2.5, back - 1),
+      Point(-1.5, 2.5, back - 1),
+      Point(-1.5, 2, back - 1),
+      //
+      Point(10, 0, back + 2),
+      Point(10, 1, back + 2),
     ];
 
     double c = 10 * distance;
@@ -189,9 +224,17 @@ class MyCustomPainter extends CustomPainter {
       [11, 10, 13, 15, 19, 20],
     );
     paintLines(indexes, canvas, paintSide, paintBack);
+    indexes.addAll(
+      [55, 56, 57, 54, 55, 14, 16, 56],
+    );
+    paintLines(indexes, canvas, paintSide, paintBack);
     // rear wheel
     indexes.addAll(
       [37, 36, 39, 43, 45, 46],
+    );
+    paintLines(indexes, canvas, paintSide, paintBack);
+    indexes.addAll(
+      [59, 60, 61, 58, 59, 40, 44, 60],
     );
     paintLines(indexes, canvas, paintSide, paintBack);
     // decor
@@ -214,7 +257,17 @@ class MyCustomPainter extends CustomPainter {
       [25, 26, 28, 27, 25],
     );
     paintLines(indexes, canvas, paintSide, paintBack);
+    indexes.addAll(
+      [62, 63, 64, 65, 62, 26, 25, 63, 64, 27, 28, 65],
+    );
+    paintLines(indexes, canvas, paintSide, paintBack);
+    //
+    indexes.addAll(
+      [52, 66, 67, 51],
+    );
+    paintLines(indexes, canvas, paintSide, paintBack);
 
+    // borders
     indexes.addAll(
       [0, 4, 11, 20, 37, 46, 53, 50, 48, 42, 33, 29, 21, 9],
     );
@@ -251,16 +304,16 @@ class MyCustomPainter extends CustomPainter {
     for (int i = 0; i < indexList.length - 1; i++) {
       canvas.drawLine(
           points2D[indexList[i]], points2D[indexList[i + 1]], paintFront);
-      canvas.drawLine(points2D[indexList[i] + 54],
-          points2D[indexList[i + 1] + 54], paintBackground);
+      canvas.drawLine(points2D[indexList[i] + points2D.length ~/ 2],
+          points2D[indexList[i + 1] + points2D.length ~/ 2], paintFront);
     }
     indexList.clear();
   }
 
   void paintBorderLines(List<int> indexList, Canvas canvas, Paint paint) {
     for (int i = 0; i < indexList.length; i++) {
-      canvas.drawLine(
-          points2D[indexList[i]], points2D[indexList[i] + 54], paint);
+      canvas.drawLine(points2D[indexList[i]],
+          points2D[indexList[i] + points2D.length ~/ 2], paint);
     }
     indexList.clear();
   }

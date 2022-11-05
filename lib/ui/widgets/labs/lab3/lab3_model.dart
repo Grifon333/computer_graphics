@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 
 class Lab3Model extends ChangeNotifier {
-  double _distance = 1.4;
+  final double _distance = 2;
   double _angleX = 0;
   double _angleY = 0;
   double _angleZ = 0;
@@ -11,13 +11,6 @@ class Lab3Model extends ChangeNotifier {
   double _movingX = 0;
   double _movingY = 0;
   double _movingZ = 0;
-
-  void setDistance(double value) {
-    double correctValue = value / 100.0;
-    if (_distance == correctValue) return;
-    _distance = correctValue;
-    notifyListeners();
-  }
 
   void setAngleX(double value) {
     if (_angleX == value) return;
