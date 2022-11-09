@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphics/Library/Widgets/Inherited/provider.dart';
-import 'package:graphics/ui/widgets/labs/lab3/3d_object.dart';
 import 'package:graphics/ui/widgets/labs/lab3/lab3_model.dart';
+import 'package:graphics/ui/widgets/labs/lab3/object.dart';
 
 class Lab3Widget extends StatelessWidget {
   const Lab3Widget({Key? key}) : super(key: key);
@@ -40,6 +40,7 @@ class _BodyWidget extends StatelessWidget {
       child: Column(
         children: const [
           _3DObjectWidget(),
+          SizedBox(height: 16),
           _SettingsWidget(),
         ],
       ),
@@ -54,15 +55,22 @@ class _3DObjectWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab3Model>(context);
     if (model == null) return const SizedBox.shrink();
+    const double height = 300, width = 300;
 
     return Center(
       child: SizedBox(
-        height: 300,
-        width: 300,
-        child: CustomPaint(
-          painter: MyCustomPainter(
-            distance: model.distance,
-            context: context,
+        height: height,
+        width: width,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(color: Colors.black12),
+          child: CustomPaint(
+            // painter: MyCustomPainter(
+            //   distance: model.distance,
+            //   context: context,
+            //   height: height,
+            //   width: width,
+            // ),
+            painter: CustomPaintObject(),
           ),
         ),
       ),

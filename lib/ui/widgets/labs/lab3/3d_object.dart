@@ -6,11 +6,18 @@ import 'package:graphics/ui/widgets/labs/lab3/lab3_model.dart';
 
 class MyCustomPainter extends CustomPainter {
   final BuildContext context;
+  final double height;
+  final double width;
   List<Offset> points2D = [];
   double distance;
+  late List<List<Color>> matrix;
+  double xMin = 100000, xMax = -100000;
+  double yMin = 100000, yMax = -100000;
 
   MyCustomPainter({
     required this.context,
+    required this.height,
+    required this.width,
     required this.distance,
   });
 
@@ -103,7 +110,7 @@ class MyCustomPainter extends CustomPainter {
       //
       Point(10, 0, front - 2),
       Point(10, 1, front - 2),
-      //
+      // -----------------------
       Point(-10, 1, back),
       Point(-10, 0.5, back),
       Point(-10, -0.5, back),
@@ -195,9 +202,112 @@ class MyCustomPainter extends CustomPainter {
       double x = vector[0] / (1 - vector[2] / c);
       double y = vector[1] / (1 - vector[2] / c);
 
+      if (x < xMin) {
+        xMin = x;
+      } else if (x > xMax) {
+        xMax = x;
+      }
+      if (y < yMin) {
+        yMin = y;
+      } else if (y > yMax) {
+        yMax = y;
+      }
+
       points2D.add(Offset(toScreenX(x), toScreenY(y)));
     }
+    double t = yMin;
+    yMin = yMax;
+    yMax = t;
+    xMax = toScreenX(xMax);
+    xMin = toScreenX(xMin);
+    yMax = toScreenY(yMax);
+    yMin = toScreenY(yMin);
 
+    matrix = List.generate(
+      (yMax - yMin).toInt(),
+      (_) => List.filled(
+        (xMax - xMin).toInt(),
+        Colors.white,
+      ),
+    );
+    _drawObject(canvas, paintSide, paintBack);
+
+    _drawPolygon([points2D[0], points2D[1]]);
+
+    canvas.drawPoints(PointMode.points, points2D, paintFace);
+    Paint paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 10;
+    for (int i = 0; i < matrix.length; i++) {
+      List<Offset> list = [];
+      for (int j = 0; j < matrix[i].length; j++) {
+        if (matrix[i][j] == Colors.black) {
+          list.add(Offset((i + yMin).toDouble(), (j + xMin).toDouble()));
+        }
+      }
+      canvas.drawPoints(PointMode.points, list, paint);
+    }
+    // print(points2D.length);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+
+  List<double> multipleMatrix(List<List<double>> matrix, List<double> vector) {
+    final newX = matrix[0][0] * vector[0] +
+        matrix[0][1] * vector[1] +
+        matrix[0][2] * vector[2] +
+        matrix[0][3] * vector[3];
+    final newY = matrix[1][0] * vector[0] +
+        matrix[1][1] * vector[1] +
+        matrix[1][2] * vector[2] +
+        matrix[1][3] * vector[3];
+    final newZ = matrix[2][0] * vector[0] +
+        matrix[2][1] * vector[1] +
+        matrix[2][2] * vector[2] +
+        matrix[2][3] * vector[3];
+
+    return [newX, newY, newZ, 1];
+  }
+
+  void paintLines(
+    List<int> indexList,
+    Canvas canvas,
+    Paint paintFront,
+    Paint paintBackground,
+  ) {
+    for (int i = 0; i < indexList.length - 1; i++) {
+      canvas.drawLine(
+          points2D[indexList[i]], points2D[indexList[i + 1]], paintFront);
+      canvas.drawLine(points2D[indexList[i] + points2D.length ~/ 2],
+          points2D[indexList[i + 1] + points2D.length ~/ 2], paintFront);
+    }
+    indexList.clear();
+  }
+
+  void _paintBorderLines(List<int> indexList, Canvas canvas, Paint paint) {
+    for (int i = 0; i < indexList.length; i++) {
+      canvas.drawLine(points2D[indexList[i]],
+          points2D[indexList[i] + points2D.length ~/ 2], paint);
+    }
+    indexList.clear();
+  }
+
+  double toScreenX(double x) {
+    const xMin = -10.0;
+    const xMax = 10.0;
+    return (x - xMin) * width / (xMax - xMin) + 0;
+  }
+
+  double toScreenY(double y) {
+    const yMin = -10.0;
+    const yMax = 10.0;
+    return (height - (y - yMin) * height / (yMax - yMin));
+  }
+
+  void _drawObject(Canvas canvas, Paint paintSide, Paint paintBack) {
     List<int> indexes = [];
     // contour
     indexes.addAll(
@@ -269,65 +379,72 @@ class MyCustomPainter extends CustomPainter {
 
     // borders
     indexes.addAll(
-      [0, 4, 11, 20, 37, 46, 53, 50, 48, 42, 33, 29, 21, 9],
+      [11, 20, 37, 46, 53, 50, 48, 42, 33, 29, 21, 9],
     );
-    paintBorderLines(indexes, canvas, paintSide);
-
-    canvas.drawPoints(PointMode.points, points2D, paintFace);
-    // print(points2D.length);
+    _paintBorderLines(indexes, canvas, paintSide);
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-
-  List<double> multipleMatrix(List<List<double>> matrix, List<double> vector) {
-    final newX = matrix[0][0] * vector[0] +
-        matrix[0][1] * vector[1] +
-        matrix[0][2] * vector[2] +
-        matrix[0][3] * vector[3];
-    final newY = matrix[1][0] * vector[0] +
-        matrix[1][1] * vector[1] +
-        matrix[1][2] * vector[2] +
-        matrix[1][3] * vector[3];
-    final newZ = matrix[2][0] * vector[0] +
-        matrix[2][1] * vector[1] +
-        matrix[2][2] * vector[2] +
-        matrix[2][3] * vector[3];
-
-    return [newX, newY, newZ, 1];
-  }
-
-  void paintLines(List<int> indexList, Canvas canvas, Paint paintFront,
-      Paint paintBackground) {
-    for (int i = 0; i < indexList.length - 1; i++) {
-      canvas.drawLine(
-          points2D[indexList[i]], points2D[indexList[i + 1]], paintFront);
-      canvas.drawLine(points2D[indexList[i] + points2D.length ~/ 2],
-          points2D[indexList[i + 1] + points2D.length ~/ 2], paintFront);
+  void _drawPolygon(List<Offset> points) {
+    for (int i = 0; i < points.length - 1; i++) {
+      _drawLine(
+        points[i],
+        points[i + 1],
+      );
     }
-    indexList.clear();
   }
 
-  void paintBorderLines(List<int> indexList, Canvas canvas, Paint paint) {
-    for (int i = 0; i < indexList.length; i++) {
-      canvas.drawLine(points2D[indexList[i]],
-          points2D[indexList[i] + points2D.length ~/ 2], paint);
+  void _drawLine(
+    Offset start,
+    Offset end,
+  ) {
+    int x1 = start.dx.toInt(), x2 = end.dx.toInt();
+    int y1 = start.dy.toInt(), y2 = end.dy.toInt();
+
+    int xErr = 0, yErr = 0;
+    int incX = 0, incY = 0;
+    int d = 0;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    if (dx > 0) {
+      incX = 1;
+    } else if (dx == 0) {
+      incX = 0;
+    } else if (dx < 0) {
+      incX = -1;
     }
-    indexList.clear();
-  }
 
-  double toScreenX(double x) {
-    const xMin = -12.0;
-    const xMax = 12.0;
-    return (x - xMin) * 300 / (xMax - xMin) + 0;
-  }
+    if (dy > 0) {
+      incY = 1;
+    } else if (dy == 0) {
+      incY = 0;
+    } else if (dy < 0) {
+      incY = -1;
+    }
+    // dx = module(dx);
+    // dy = module(dy);
+    d = dx > dy ? dx : dy;
 
-  double toScreenY(double y) {
-    const yMin = -12.0;
-    const yMax = 12.0;
-    return (300 - (y - yMin) * 300 / (yMax - yMin));
+    int x = x1;
+    int y = y1;
+    // points.add(Offset(x.toDouble(), y.toDouble()));
+    matrix[y - yMin.toInt()][x - xMin.toInt()] = Colors.black;
+
+    for (int i = 0; i < d; i++) {
+      xErr += dx;
+      yErr += dy;
+
+      if (xErr > d) {
+        xErr -= d;
+        x += incX;
+      }
+      if (yErr > d) {
+        yErr -= d;
+        y += incY;
+      }
+      // points.add(Offset(x.toDouble(), y.toDouble()));
+      matrix[y - yMin.toInt()][x - xMin.toInt()] = Colors.black;
+    }
   }
 }
 
@@ -346,25 +463,4 @@ class Point {
   double get dy => _dy;
 
   double get dz => _dz;
-}
-
-class Vector {
-  final double _dx;
-  final double _dy;
-  final double _dz;
-  final double _w;
-
-  Vector(double dx, double dy, double dz)
-      : _dx = dx,
-        _dy = dy,
-        _dz = dz,
-        _w = 1;
-
-  double get dx => _dx;
-
-  double get dy => _dy;
-
-  double get dz => _dz;
-
-  double get w => _w;
 }

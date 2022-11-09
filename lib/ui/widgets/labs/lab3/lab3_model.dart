@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 
 class Lab3Model extends ChangeNotifier {
-  final double _distance = 2;
+  final double _distance = 3;
   double _angleX = 0;
   double _angleY = 0;
   double _angleZ = 0;
