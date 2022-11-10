@@ -34,10 +34,12 @@ class CustomPaintObject extends CustomPainter {
     //   Point(_toScreenX(-10), _toScreenY(10), 1, Colors.black),
     //   Point(_toScreenX(10), _toScreenY(-10), 1, Colors.black),
     // );
-    _drawPolygon(Colors.black, [
-      Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.green),
-      Point(_toScreenX(10), _toScreenY(10), 3, Colors.green),
-      Point(_toScreenX(-5), _toScreenY(10), 3, Colors.green),
+    _drawPolygon(Colors.blue, [
+      Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.blue),
+      Point(_toScreenX(8), _toScreenY(10), 3, Colors.blue),
+      // Point(_toScreenX(-1), _toScreenY(10), 3, Colors.blue),
+      Point(_toScreenX(0), _toScreenY(8), 3, Colors.blue),
+      Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.blue),
     ]);
 
     _drawObject(canvas);
@@ -166,22 +168,40 @@ class CustomPaintObject extends CustomPainter {
   }
 
   void _drawPolygon(Color color, List<Point> listPoints) {
-    Map<double, Set<double>> mapCoordinates = {};
-    for (int i = 0; i < listPoints.length; i++) {
-      for (int j = 0; j < listPoints.length; j++) {
-        // TODO: edit polygon building
-        if (i == j) continue;
-        final list = _drawLine(listPoints[i], listPoints[j]);
-        for (int k = 0; k < list.length; k++) {
-          if (k > 1 && list[k].dx == list[k - 1].dx) continue;
-          Set<double> l = mapCoordinates[list[k].dx] ?? {};
-          l.add(list[k].dy);
-          l = SplayTreeSet.from(l);
-          mapCoordinates[list[k].dx] = l;
-        }
+    Map<double, Set<Point>> mapCoordinates = {};
+    for (int i = 0; i < listPoints.length - 1; i++) {
+      final list = _drawLine(listPoints[i], listPoints[i + 1]);
+      for (int k = 0; k < list.length; k++) {
+        if (k > 1 && list[k].dx == list[k - 1].dx) continue;
+        Set<Point> l = mapCoordinates[list[k].dx] ?? {};
+        l.add(list[k]);
+        l = SplayTreeSet.from(l, (a, b) => a.dy.compareTo(b.dy));
+        mapCoordinates[list[k].dx] = l;
       }
     }
-    print(mapCoordinates);
+    for (final item in mapCoordinates.entries) {
+      int count = item.value.length;
+      if (count == 2 || count == 3) {
+        _drawLine(
+          item.value.first,
+          item.value.last,
+        );
+      }
+      else if (count == 4) {
+        _drawLine(
+          item.value.elementAt(0),
+          item.value.elementAt(1),
+        );
+        _drawLine(
+          item.value.elementAt(2),
+          item.value.elementAt(3),
+        );
+      }
+    }
+
+    // for (final item in mapCoordinates.values) {
+    //   print('(${item.map((e) => '${e.dx}, ${e.dy}, ${e.dz}').join(';  ')})');
+    // }
   }
 }
 
@@ -198,6 +218,8 @@ class Point {
         _color = color;
 
   static const Point zero = Point(0, 0, 0, Colors.white);
+
+  set color(Color color) => _color;
 
   double get dx => _dx;
 
