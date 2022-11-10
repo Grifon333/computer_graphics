@@ -2,47 +2,19 @@ import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:graphics/ui/widgets/labs/lab3/points.dart';
 
 class CustomPaintObject extends CustomPainter {
   late List<List<Point>> matrix;
   List<Point> points = [];
-  double xMin = 100000, xMax = -100000;
-  double yMin = 100000, yMax = -100000;
 
   @override
   void paint(Canvas canvas, Size size) {
-    // final paint = Paint()
-    //   ..color = Colors.red
-    //   ..strokeWidth = 2;
+    matrix = List.generate((size.height + 1).toInt(),
+        (index) => List.filled((size.width + 1).toInt(), Point.zero));
 
-    xMin = _toScreenX(-10);
-    xMax = _toScreenX(10);
-    yMin = _toScreenY(-10);
-    yMax = _toScreenY(10);
-    double t = yMin;
-    yMin = yMax;
-    yMax = t;
-
-    matrix = List.generate((yMax - yMin + 1).toInt(),
-        (index) => List.filled((xMax - xMin + 1).toInt(), Point.zero));
-
-    // _drawLine(
-    //   Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.green),
-    //   Point(_toScreenX(10), _toScreenY(10), -5, Colors.green),
-    // );
-    // _drawLine(
-    //   Point(_toScreenX(-10), _toScreenY(10), 1, Colors.black),
-    //   Point(_toScreenX(10), _toScreenY(-10), 1, Colors.black),
-    // );
-    _drawPolygon(Colors.blue, [
-      Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.blue),
-      Point(_toScreenX(8), _toScreenY(10), 3, Colors.blue),
-      // Point(_toScreenX(-1), _toScreenY(10), 3, Colors.blue),
-      Point(_toScreenX(0), _toScreenY(8), 3, Colors.blue),
-      Point(_toScreenX(-10), _toScreenY(-10), 3, Colors.blue),
-    ]);
-
-    _drawObject(canvas);
+    _drawElements();
+    _showObject(canvas);
   }
 
   @override
@@ -103,8 +75,8 @@ class CustomPaintObject extends CustomPainter {
     int y = y1;
     int z = z1;
     Point point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
-    if (point.dz > matrix[y - yMin.toInt()][x - xMin.toInt()].dz) {
-      matrix[y - yMin.toInt()][x - xMin.toInt()] = point;
+    if (point.dz > matrix[y][x].dz) {
+      matrix[y][x] = point;
       points.add(point);
     }
     listPoints.add(point);
@@ -126,8 +98,8 @@ class CustomPaintObject extends CustomPainter {
         z += incZ;
       }
       point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
-      if (point.dz > matrix[y - yMin.toInt()][x - xMin.toInt()].dz) {
-        matrix[y - yMin.toInt()][x - xMin.toInt()] = point;
+      if (point.dz > matrix[y][x].dz) {
+        matrix[y][x] = point;
         points.add(point);
       }
       listPoints.add(point);
@@ -136,21 +108,7 @@ class CustomPaintObject extends CustomPainter {
     return listPoints;
   }
 
-  double _toScreenX(double x) {
-    const xMin = -10.0;
-    const xMax = 10.0;
-    const width = 300;
-    return (x - xMin) * width / (xMax - xMin) + 0;
-  }
-
-  double _toScreenY(double y) {
-    const yMin = -10.0;
-    const yMax = 10.0;
-    const height = 300;
-    return (height - (y - yMin) * height / (yMax - yMin));
-  }
-
-  void _drawObject(Canvas canvas) {
+  void _showObject(Canvas canvas) {
     for (int i = 0; i < points.length; i++) {
       Paint paint = Paint()
         ..color = points[i].color
@@ -167,7 +125,7 @@ class CustomPaintObject extends CustomPainter {
     return value < 0 ? value * -1 : value;
   }
 
-  void _drawPolygon(Color color, List<Point> listPoints) {
+  void _drawPolygon(List<Point> listPoints) {
     Map<double, Set<Point>> mapCoordinates = {};
     for (int i = 0; i < listPoints.length - 1; i++) {
       final list = _drawLine(listPoints[i], listPoints[i + 1]);
@@ -186,8 +144,7 @@ class CustomPaintObject extends CustomPainter {
           item.value.first,
           item.value.last,
         );
-      }
-      else if (count == 4) {
+      } else if (count == 4) {
         _drawLine(
           item.value.elementAt(0),
           item.value.elementAt(1),
@@ -198,10 +155,41 @@ class CustomPaintObject extends CustomPainter {
         );
       }
     }
-
     // for (final item in mapCoordinates.values) {
     //   print('(${item.map((e) => '${e.dx}, ${e.dy}, ${e.dz}').join(';  ')})');
     // }
+  }
+
+  double _toScreenX(double x) {
+    const xMin = -30.0;
+    const xMax = 30.0;
+    const width = 300;
+    return (x - xMin) * width / (xMax - xMin);
+  }
+
+  double _toScreenY(double y) {
+    const yMin = -30.0;
+    const yMax = 30.0;
+    const height = 300;
+    return (height - (y - yMin) * height / (yMax - yMin));
+  }
+
+  void _drawElements() {
+    _drawElement(Colors.black, Points.wheels);
+    _drawElement(Colors.blue, Points.body);
+  }
+
+  void _drawElement(Color color, List<List<List<double>>> list) {
+    for (int i = 0; i < list.length; i++) {
+      final polygon = Polygon(
+        [_toScreenX(list[i][0][0]), _toScreenY(list[i][0][1]), list[i][0][2]],
+        [_toScreenX(list[i][1][0]), _toScreenY(list[i][1][1]), list[i][1][2]],
+        [_toScreenX(list[i][2][0]), _toScreenY(list[i][2][1]), list[i][2][2]],
+        color,
+      );
+      _drawPolygon(
+          [polygon.first, polygon.second, polygon.third, polygon.first]);
+    }
   }
 }
 
@@ -219,13 +207,48 @@ class Point {
 
   static const Point zero = Point(0, 0, 0, Colors.white);
 
-  set color(Color color) => _color;
-
   double get dx => _dx;
 
   double get dy => _dy;
 
   double get dz => _dz;
+
+  Color get color => _color;
+}
+
+class Polygon {
+  final Point _first;
+  final Point _second;
+  final Point _third;
+  final Color _color;
+
+  Polygon(
+    List<double> point1,
+    List<double> point2,
+    List<double> point3,
+    Color color,
+  )   : _first = Point(point1[0], point1[1], point1[2], color),
+        _second = Point(point2[0], point2[1], point2[2], color),
+        _third = Point(point3[0], point3[1], point3[2], color),
+        _color = color,
+        assert(
+          point1.length == 3,
+          'Length point1 coordinators of polygon != 3',
+        ),
+        assert(
+          point2.length == 3,
+          'Length point2 coordinators of polygon != 3',
+        ),
+        assert(
+          point3.length == 3,
+          'Length point3 coordinators of polygon != 3',
+        );
+
+  Point get first => _first;
+
+  Point get second => _second;
+
+  Point get third => _third;
 
   Color get color => _color;
 }

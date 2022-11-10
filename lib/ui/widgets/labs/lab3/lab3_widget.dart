@@ -62,7 +62,8 @@ class _3DObjectWidget extends StatelessWidget {
         height: height,
         width: width,
         child: DecoratedBox(
-          decoration: const BoxDecoration(color: Colors.black12),
+          // decoration: const BoxDecoration(color: Colors.black12),
+          decoration: const BoxDecoration(color: Colors.transparent),
           child: CustomPaint(
             // painter: MyCustomPainter(
             //   distance: model.distance,

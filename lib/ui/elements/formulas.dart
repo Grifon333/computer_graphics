@@ -385,4 +385,12 @@ class Formulas {
   int module(int value) {
     return value < 0 ? value * -1 : value;
   }
+
+  double _toScreenX(double x, double xMin, double xMax, double width) {
+    return (x - xMin) * width / (xMax - xMin) + 0;
+  }
+
+  double _toScreenY(double y, double yMin, double yMax, double height) {
+    return (height - (y - yMin) * height / (yMax - yMin));
+  }
 }
