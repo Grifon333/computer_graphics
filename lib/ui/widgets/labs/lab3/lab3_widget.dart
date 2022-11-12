@@ -71,7 +71,7 @@ class _3DObjectWidget extends StatelessWidget {
             //   height: height,
             //   width: width,
             // ),
-            painter: CustomPaintObject(),
+            painter: CustomPaintObject(context),
           ),
         ),
       ),
