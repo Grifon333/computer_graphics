@@ -15,8 +15,8 @@ class CustomPaintObject extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    matrix = List.generate((size.height + 1).toInt() + 300,
-        (index) => List.filled((size.width + 1).toInt() + 300, Point.zero));
+    matrix = List.generate((size.height + 1).toInt() + 400,
+        (index) => List.filled((size.width + 1).toInt() + 400, Point.zero));
 
     _drawElements();
     _showObject(canvas);
@@ -80,8 +80,8 @@ class CustomPaintObject extends CustomPainter {
     int y = y1;
     int z = z1;
     Point point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
-    if (point.dz > matrix[y + 150][x + 150].dz) {
-      matrix[y + 150][x + 150] = point;
+    if (point.dz > matrix[y + 200][x + 200].dz) {
+      matrix[y + 200][x + 200] = point;
       points.add(point);
     }
     listPoints.add(point);
@@ -103,8 +103,8 @@ class CustomPaintObject extends CustomPainter {
         z += incZ;
       }
       point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
-      if (point.dz > matrix[y + 150][x + 150].dz) {
-        matrix[y + 150][x + 150] = point;
+      if (point.dz > matrix[y + 200][x + 200].dz) {
+        matrix[y + 200][x + 200] = point;
         points.add(point);
       }
       listPoints.add(point);
@@ -180,10 +180,17 @@ class CustomPaintObject extends CustomPainter {
   }
 
   void _drawElements() {
-    _drawElement(Colors.black, Points.wheels());
-    _drawElement(Colors.blue, Points.body());
-    _drawElement(Colors.blue, Points.front);
+    Color body = Colors.blue;
+    Color lights = Colors.yellow;
+    Color wheels = Colors.black;
+    _drawElement(Colors.black, Points.borders);
+    _drawElement(wheels, Points.wheels());
+    _drawElement(body, Points.body());
+    _drawElement(body, Points.front);
     _drawElement(Colors.black, Points.frontBumper);
+    _drawElement(lights, Points.frontLights);
+    _drawElement(Colors.green, Points.hood);
+    _drawElement(Colors.white, Points.frontWindow);
   }
 
   void _drawElement(Color color, List<List<List<double>>> list) {
