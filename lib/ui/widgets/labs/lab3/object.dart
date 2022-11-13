@@ -142,24 +142,24 @@ class CustomPaintObject extends CustomPainter {
         mapCoordinates[list[k].dx] = l;
       }
     }
-    for (final item in mapCoordinates.entries) {
-      int count = item.value.length;
-      if (count == 2 || count == 3) {
-        _drawLine(
-          item.value.first,
-          item.value.last,
-        );
-      } else if (count == 4) {
-        _drawLine(
-          item.value.elementAt(0),
-          item.value.elementAt(1),
-        );
-        _drawLine(
-          item.value.elementAt(2),
-          item.value.elementAt(3),
-        );
-      }
-    }
+    // for (final item in mapCoordinates.entries) {
+    //   int count = item.value.length;
+    //   if (count == 2 || count == 3) {
+    //     _drawLine(
+    //       item.value.first,
+    //       item.value.last,
+    //     );
+    //   } else if (count == 4) {
+    //     _drawLine(
+    //       item.value.elementAt(0),
+    //       item.value.elementAt(1),
+    //     );
+    //     _drawLine(
+    //       item.value.elementAt(2),
+    //       item.value.elementAt(3),
+    //     );
+    //   }
+    // }
     // for (final item in mapCoordinates.values) {
     //   print('(${item.map((e) => '${e.dx}, ${e.dy}, ${e.dz}').join(';  ')})');
     // }
@@ -189,8 +189,9 @@ class CustomPaintObject extends CustomPainter {
     _drawElement(body, Points.front);
     _drawElement(Colors.black, Points.frontBumper);
     _drawElement(lights, Points.frontLights);
-    _drawElement(Colors.green, Points.hood);
+    _drawElement(body, Points.hood);
     _drawElement(Colors.white, Points.frontWindow);
+    _drawElement(body, Points.back);
   }
 
   void _drawElement(Color color, List<List<List<double>>> list) {
