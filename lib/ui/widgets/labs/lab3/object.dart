@@ -8,7 +8,7 @@ import 'package:graphics/ui/widgets/labs/lab3/points.dart';
 
 class CustomPaintObject extends CustomPainter {
   late List<List<Point>> matrix;
-  List<Point> points = [];
+  // List<Point> points = [];
   final BuildContext context;
 
   CustomPaintObject(this.context);
@@ -82,7 +82,7 @@ class CustomPaintObject extends CustomPainter {
     Point point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
     if (point.dz > matrix[y + 200][x + 200].dz) {
       matrix[y + 200][x + 200] = point;
-      points.add(point);
+      // points.add(point);
     }
     listPoints.add(point);
 
@@ -105,7 +105,7 @@ class CustomPaintObject extends CustomPainter {
       point = Point(x.toDouble(), y.toDouble(), z.toDouble(), color);
       if (point.dz > matrix[y + 200][x + 200].dz) {
         matrix[y + 200][x + 200] = point;
-        points.add(point);
+        // points.add(point);
       }
       listPoints.add(point);
     }
@@ -114,16 +114,30 @@ class CustomPaintObject extends CustomPainter {
   }
 
   void _showObject(Canvas canvas) {
-    for (int i = 0; i < points.length; i++) {
-      Paint paint = Paint()
-        ..color = points[i].color
-        ..strokeWidth = 1;
-      canvas.drawPoints(
-        PointMode.points,
-        [Offset(points[i].dx, points[i].dy)],
-        paint,
-      );
+    for (int i = 0; i < matrix.length; i++) {
+      for (int j = 0; j < matrix[i].length; j++) {
+        if (matrix[i][j] == Point.zero) continue;
+        Paint paint = Paint()
+          ..color = matrix[i][j].color
+          ..strokeWidth = 1;
+
+        canvas.drawPoints(
+          PointMode.points,
+          [Offset(matrix[i][j].dx, matrix[i][j].dy)],
+          paint,
+        );
+      }
     }
+    // for (int i = 0; i < points.length; i++) {
+    //   Paint paint = Paint()
+    //     ..color = points[i].color
+    //     ..strokeWidth = 1;
+    //   canvas.drawPoints(
+    //     PointMode.points,
+    //     [Offset(points[i].dx, points[i].dy)],
+    //     paint,
+    //   );
+    // }
   }
 
   int _module(int value) {
@@ -142,24 +156,24 @@ class CustomPaintObject extends CustomPainter {
         mapCoordinates[list[k].dx] = l;
       }
     }
-    // for (final item in mapCoordinates.entries) {
-    //   int count = item.value.length;
-    //   if (count == 2 || count == 3) {
-    //     _drawLine(
-    //       item.value.first,
-    //       item.value.last,
-    //     );
-    //   } else if (count == 4) {
-    //     _drawLine(
-    //       item.value.elementAt(0),
-    //       item.value.elementAt(1),
-    //     );
-    //     _drawLine(
-    //       item.value.elementAt(2),
-    //       item.value.elementAt(3),
-    //     );
-    //   }
-    // }
+    for (final item in mapCoordinates.entries) {
+      int count = item.value.length;
+      if (count == 2 || count == 3) {
+        _drawLine(
+          item.value.first,
+          item.value.last,
+        );
+      } else if (count == 4) {
+        _drawLine(
+          item.value.elementAt(0),
+          item.value.elementAt(1),
+        );
+        _drawLine(
+          item.value.elementAt(2),
+          item.value.elementAt(3),
+        );
+      }
+    }
     // for (final item in mapCoordinates.values) {
     //   print('(${item.map((e) => '${e.dx}, ${e.dy}, ${e.dz}').join(';  ')})');
     // }
@@ -180,18 +194,23 @@ class CustomPaintObject extends CustomPainter {
   }
 
   void _drawElements() {
-    Color body = Colors.blue;
+    Color body = Colors.black12;
     Color lights = Colors.yellow;
     Color wheels = Colors.black;
-    _drawElement(Colors.black, Points.borders);
+
+    _drawElement(Colors.black54, Points.borders());
+    _drawElement(Colors.white, Points.elementOnCar);
     _drawElement(wheels, Points.wheels());
     _drawElement(body, Points.body());
     _drawElement(body, Points.front);
     _drawElement(Colors.black, Points.frontBumper);
     _drawElement(lights, Points.frontLights);
     _drawElement(body, Points.hood);
-    _drawElement(Colors.white, Points.frontWindow);
+    _drawElement(Colors.black87, Points.windows);
     _drawElement(body, Points.back);
+    _drawElement(Colors.red, Points.backLights);
+    _drawElement(body, Points.mirrors);
+    _drawElement(Colors.black87, Points.bottom);
   }
 
   void _drawElement(Color color, List<List<List<double>>> list) {
